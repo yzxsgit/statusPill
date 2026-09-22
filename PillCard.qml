@@ -15,6 +15,7 @@ Rectangle {
     property string detailText: ""
     property real bgOpacity: 0.4
     property bool isWarning: false
+    property bool showBorder: true
 
     signal clicked()
 
@@ -27,7 +28,7 @@ Rectangle {
         mouseArea.containsMouse ? accentColor : (isWarning ? Theme.error : Theme.outlineVariant),
         Math.min(1.0, bgOpacity + 0.3)
     )
-    border.width: isWarning || mouseArea.containsMouse ? 1.5 : 1
+    border.width: isWarning || mouseArea.containsMouse ? 1.5 : (showBorder ? 1 : 0)
 
     Behavior on border.color {
         ColorAnimation { duration: 180 }

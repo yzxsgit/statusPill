@@ -18,19 +18,37 @@ DesktopPluginComponent {
     implicitHeight: 66
 
     // ---------------------------------------------------------------
-    // Configuration & Settings (reactive from pluginData)
+    // Configuration & Settings (reactive from pluginData / instanceConfig)
     // ---------------------------------------------------------------
-    readonly property real bgOpacity: (pluginData.bgOpacity ?? 35) / 100.0
+    // Transparency / Opacity (supports backgroundOpacity, transparency, bgOpacity)
+    readonly property real bgOpacity: {
+        const v = pluginData.backgroundOpacity ?? pluginData.transparency ?? pluginData.bgOpacity ?? 35
+        return v > 1 ? (v / 100.0) : v
+    }
+
+    // Display Toggles (like DesktopClock)
+    readonly property bool showBorder: pluginData.showBorder ?? true
+    readonly property bool showCpu: pluginData.showCpu ?? true
+    readonly property bool showMemory: pluginData.showMemory ?? true
+    readonly property bool showBattery: pluginData.showBattery ?? true
+    readonly property bool showTemperature: pluginData.showTemperature ?? true
+
+    // Refresh, Launch, Thresholds
     readonly property int refreshInterval: pluginData.refreshInterval ?? 1000
     readonly property string launchCommand: pluginData.launchCommand || "kitty -e btop"
     readonly property real cpuWarnThreshold: pluginData.cpuWarnThreshold ?? 80
     readonly property real memWarnThreshold: pluginData.memWarnThreshold ?? 85
     readonly property real tempWarnThreshold: pluginData.tempWarnThreshold ?? 80
 
+    // Unified Theme Color (supports primary, secondary, tertiary, custom)
     readonly property color themeColor: {
-        const choice = pluginData.themeColorChoice ?? "primary"
+        const choice = pluginData.themeColorChoice ?? pluginData.colorMode ?? "primary"
         if (choice === "secondary") return Theme.secondary
         if (choice === "tertiary") return Theme.tertiary
+        if (choice === "custom") {
+            const c = pluginData.customColor
+            return c ? Qt.color(c) : Theme.primary
+        }
         return Theme.primary
     }
 
@@ -82,7 +100,7 @@ DesktopPluginComponent {
 
         color: Theme.withAlpha(Theme.surfaceContainer, root.bgOpacity * 0.6)
         border.color: Theme.withAlpha(Theme.outlineVariant, Math.min(1.0, root.bgOpacity + 0.15))
-        border.width: root.bgOpacity > 0.05 ? 1 : 0
+        border.width: root.showBorder && root.bgOpacity > 0.02 ? 1 : 0
 
         Behavior on color {
             ColorAnimation { duration: 200 }
@@ -99,6 +117,7 @@ DesktopPluginComponent {
 
             // 1. CPU Card
             PillCard {
+                visible: root.showCpu
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.preferredWidth: 115
@@ -113,6 +132,7 @@ DesktopPluginComponent {
                 accentColor: isWarning ? Theme.error : root.themeColor
                 isWarning: (DgopService.cpuUsage > root.cpuWarnThreshold)
                 bgOpacity: root.bgOpacity
+                showBorder: root.showBorder
                 detailText: {
                     let text = "CPU: " + ((DgopService.cpuUsage ?? 0).toFixed(1)) + "%\n"
                     if (DgopService.cpuModel) text += DgopService.cpuModel + "\n"
@@ -126,6 +146,7 @@ DesktopPluginComponent {
 
             // 2. Memory Card
             PillCard {
+                visible: root.showMemory
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.preferredWidth: 115
@@ -140,6 +161,7 @@ DesktopPluginComponent {
                 accentColor: isWarning ? Theme.error : root.themeColor
                 isWarning: (DgopService.memoryUsage > root.memWarnThreshold)
                 bgOpacity: root.bgOpacity
+                showBorder: root.showBorder
                 detailText: {
                     let text = "Memory: " + ((DgopService.memoryUsage ?? 0).toFixed(1)) + "%\n"
                     if (DgopService.usedMemoryKB && DgopService.totalMemoryKB) {
@@ -159,6 +181,7 @@ DesktopPluginComponent {
 
             // 3. Battery Card
             PillCard {
+                visible: root.showBattery
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.preferredWidth: 115
@@ -179,6 +202,7 @@ DesktopPluginComponent {
                 accentColor: isWarning ? Theme.error : root.themeColor
                 isWarning: (!BatteryService.isCharging && BatteryService.isLowBattery)
                 bgOpacity: root.bgOpacity
+                showBorder: root.showBorder
                 detailText: {
                     if (!BatteryService.batteryAvailable) {
                         return "Connected to AC Power\nNo battery detected"
@@ -193,6 +217,7 @@ DesktopPluginComponent {
 
             // 4. Temperature Card
             PillCard {
+                visible: root.showTemperature
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.preferredWidth: 115
@@ -209,6 +234,7 @@ DesktopPluginComponent {
                 accentColor: isWarning ? Theme.error : root.themeColor
                 isWarning: (DgopService.cpuTemperature > root.tempWarnThreshold)
                 bgOpacity: root.bgOpacity
+                showBorder: root.showBorder
                 detailText: {
                     let text = "CPU Package: " + (DgopService.cpuTemperature > 0 ? (DgopService.cpuTemperature.toFixed(1) + "°C") : "N/A") + "\n"
                     text += "Warning Alert at: " + root.tempWarnThreshold + "°C\n"
