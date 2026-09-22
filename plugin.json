@@ -1,0 +1,18 @@
+{
+    "id": "statusPill",
+    "name": "Status Pill",
+    "description": "Compact Material 3 system status dock for CPU, memory, battery, and temperature in Niri",
+    "version": "1.0.0",
+    "author": "yzx",
+    "type": "desktop",
+    "capabilities": [
+        "desktop-widget"
+    ],
+    "component": "./StatusPillWidget.qml",
+    "settings": "./StatusPillSettings.qml",
+    "icon": "speed",
+    "permissions": [
+        "settings_read",
+        "settings_write"
+    ]
+}
