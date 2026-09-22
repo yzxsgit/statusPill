@@ -1,5 +1,7 @@
 # Status Pill (DMS 桌面硬件监控挂件)
 
+![Status Pill Screenshot](./screenshot.png)
+
 适用于 Arch Linux 下 **Niri** 窗口管理器的 **DankMaterialShell (DMS)** 极简桌面硬件监控插件。
 
 ## 功能特性
