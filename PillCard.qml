@@ -20,7 +20,7 @@ Rectangle {
 
     implicitWidth: 116
     implicitHeight: 56
-    radius: 16
+    radius: 14
 
     color: Theme.withAlpha(Theme.surfaceContainerHigh, bgOpacity)
     border.color: Theme.withAlpha(
@@ -44,19 +44,19 @@ Rectangle {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 8
-        spacing: 4
+        anchors.margins: 6
+        spacing: 3
 
         // Upper info row: Icon + Values
         RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            spacing: 8
+            spacing: 6
 
             Rectangle {
-                Layout.preferredWidth: 32
-                Layout.preferredHeight: 32
-                radius: 10
+                Layout.preferredWidth: 28
+                Layout.preferredHeight: 28
+                radius: 8
                 color: Theme.withAlpha(root.accentColor, mouseArea.containsMouse ? 0.25 : 0.12)
 
                 Behavior on color {
@@ -66,19 +66,19 @@ Rectangle {
                 DankIcon {
                     anchors.centerIn: parent
                     name: root.iconName
-                    size: 18
+                    size: 16
                     color: root.accentColor
                 }
             }
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 1
+                spacing: 0
 
                 Text {
                     text: root.valueText
                     color: root.isWarning ? Theme.error : Theme.surfaceText
-                    font.pixelSize: 14
+                    font.pixelSize: 13
                     font.weight: Font.DemiBold
                     font.family: Theme.bodyFont
                     elide: Text.ElideRight
@@ -88,7 +88,7 @@ Rectangle {
                 Text {
                     text: root.title
                     color: Theme.surfaceVariantText
-                    font.pixelSize: 10
+                    font.pixelSize: 9
                     font.weight: Font.Medium
                     font.family: Theme.bodyFont
                     elide: Text.ElideRight
@@ -128,7 +128,7 @@ Rectangle {
         ToolTip {
             id: tip
             visible: mouseArea.containsMouse && root.detailText.length > 0
-            delay: 350
+            delay: 300
             timeout: 5000
 
             contentItem: Text {

@@ -11,9 +11,11 @@ import qs.Modules.Plugins
 DesktopPluginComponent {
     id: root
 
-    // Dimensions
-    implicitWidth: mainDock.implicitWidth
-    implicitHeight: mainDock.implicitHeight
+    // Widget dimension constraints for DesktopPluginWrapper
+    minWidth: 480
+    minHeight: 66
+    implicitWidth: 496
+    implicitHeight: 66
 
     // ---------------------------------------------------------------
     // Configuration & Settings (reactive from pluginData)
@@ -32,6 +34,9 @@ DesktopPluginComponent {
 
     Component.onCompleted: {
         DgopService.addRef(activeModules)
+        if (root.requestResize && root.widgetWidth < root.minWidth) {
+            root.requestResize(root.minWidth, root.minHeight)
+        }
     }
 
     Component.onDestruction: {
@@ -65,9 +70,8 @@ DesktopPluginComponent {
     // ---------------------------------------------------------------
     Rectangle {
         id: mainDock
-        implicitWidth: dockRow.implicitWidth + 16
-        implicitHeight: dockRow.implicitHeight + 16
-        radius: 20
+        anchors.fill: parent
+        radius: 18
 
         color: Theme.withAlpha(Theme.surfaceContainer, root.bgOpacity * 0.6)
         border.color: Theme.withAlpha(Theme.outlineVariant, Math.min(1.0, root.bgOpacity + 0.15))
@@ -82,11 +86,17 @@ DesktopPluginComponent {
 
         RowLayout {
             id: dockRow
-            anchors.centerIn: parent
-            spacing: 8
+            anchors.fill: parent
+            anchors.margins: 5
+            spacing: 6
 
             // 1. CPU Card
             PillCard {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.preferredWidth: 115
+                Layout.minimumWidth: 100
+
                 iconName: "memory"
                 title: "CPU"
                 valueText: (DgopService.cpuUsage !== undefined && DgopService.cpuUsage !== null) 
@@ -109,6 +119,11 @@ DesktopPluginComponent {
 
             // 2. Memory Card
             PillCard {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.preferredWidth: 115
+                Layout.minimumWidth: 100
+
                 iconName: "storage"
                 title: "MEM"
                 valueText: (DgopService.memoryUsage !== undefined && DgopService.memoryUsage !== null)
@@ -137,6 +152,11 @@ DesktopPluginComponent {
 
             // 3. Battery Card
             PillCard {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.preferredWidth: 115
+                Layout.minimumWidth: 100
+
                 iconName: BatteryService.batteryAvailable 
                     ? (BatteryService.getBatteryIcon ? BatteryService.getBatteryIcon() : "battery_std") 
                     : "power"
@@ -168,6 +188,11 @@ DesktopPluginComponent {
 
             // 4. Temperature Card
             PillCard {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.preferredWidth: 115
+                Layout.minimumWidth: 100
+
                 iconName: "thermostat"
                 title: "TEMP"
                 valueText: (DgopService.cpuTemperature > 0) 
