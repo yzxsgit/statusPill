@@ -27,6 +27,13 @@ DesktopPluginComponent {
     readonly property real memWarnThreshold: pluginData.memWarnThreshold ?? 85
     readonly property real tempWarnThreshold: pluginData.tempWarnThreshold ?? 80
 
+    readonly property color themeColor: {
+        const choice = pluginData.themeColorChoice ?? "primary"
+        if (choice === "secondary") return Theme.secondary
+        if (choice === "tertiary") return Theme.tertiary
+        return Theme.primary
+    }
+
     // ---------------------------------------------------------------
     // Service Lifecycle Management
     // ---------------------------------------------------------------
@@ -103,7 +110,7 @@ DesktopPluginComponent {
                     ? DgopService.cpuUsage.toFixed(0) + "%" 
                     : "--%"
                 progress: (DgopService.cpuUsage ?? 0) / 100.0
-                accentColor: (DgopService.cpuUsage > root.cpuWarnThreshold) ? Theme.error : Theme.primary
+                accentColor: isWarning ? Theme.error : root.themeColor
                 isWarning: (DgopService.cpuUsage > root.cpuWarnThreshold)
                 bgOpacity: root.bgOpacity
                 detailText: {
@@ -130,7 +137,7 @@ DesktopPluginComponent {
                     ? DgopService.memoryUsage.toFixed(0) + "%"
                     : "--%"
                 progress: (DgopService.memoryUsage ?? 0) / 100.0
-                accentColor: (DgopService.memoryUsage > root.memWarnThreshold) ? Theme.error : Theme.secondary
+                accentColor: isWarning ? Theme.error : root.themeColor
                 isWarning: (DgopService.memoryUsage > root.memWarnThreshold)
                 bgOpacity: root.bgOpacity
                 detailText: {
@@ -169,9 +176,7 @@ DesktopPluginComponent {
                 progress: BatteryService.batteryAvailable 
                     ? (BatteryService.batteryLevel / 100.0) 
                     : 1.0
-                accentColor: (!BatteryService.isCharging && BatteryService.isLowBattery)
-                    ? Theme.error
-                    : (BatteryService.isCharging ? "#22C55E" : Theme.tertiary)
+                accentColor: isWarning ? Theme.error : root.themeColor
                 isWarning: (!BatteryService.isCharging && BatteryService.isLowBattery)
                 bgOpacity: root.bgOpacity
                 detailText: {
@@ -201,7 +206,7 @@ DesktopPluginComponent {
                 progress: (DgopService.cpuTemperature > 0) 
                     ? Math.max(0, Math.min(1.0, DgopService.cpuTemperature / 100.0)) 
                     : 0.0
-                accentColor: (DgopService.cpuTemperature > root.tempWarnThreshold) ? Theme.error : Theme.tertiary
+                accentColor: isWarning ? Theme.error : root.themeColor
                 isWarning: (DgopService.cpuTemperature > root.tempWarnThreshold)
                 bgOpacity: root.bgOpacity
                 detailText: {

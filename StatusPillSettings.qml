@@ -18,6 +18,19 @@ PluginSettings {
         unit: "%"
     }
 
+    // 2. Unified Theme Accent Color
+    SelectionSetting {
+        settingKey: "themeColorChoice"
+        label: I18n.tr("Unified Theme Color")
+        description: I18n.tr("Theme color shared across all metric cards (CPU, Memory, Battery, Temperature)")
+        defaultValue: "primary"
+        options: [
+            { label: I18n.tr("Primary (Main Theme Accent)"), value: "primary" },
+            { label: I18n.tr("Secondary"),                  value: "secondary" },
+            { label: I18n.tr("Tertiary"),                   value: "tertiary" }
+        ]
+    }
+
     // 2. Refresh Interval
     SliderSetting {
         settingKey: "refreshInterval"
